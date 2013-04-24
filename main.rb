@@ -3,12 +3,33 @@ require 'shotgun'
 require 'slim'
 require 'sass'
 require './song'
+require 'v8'
+require 'coffee-script'
 
 configure do 
 	enable :sessions
 	set :username, 'frank'
 	set :password, 'sinatra'
 end
+
+helpers do
+  def css(*stylesheets)
+    stylesheets.map do |stylesheet|
+    "<link href=\"/#{stylesheet}.css\" media=\"screen, projection\" rel=\"stylesheet\" />"
+    end.join
+  end
+
+  def set_title
+  	@title ||= "Songs by Sinatra"
+  end
+end
+
+before do
+    set_title
+end
+
+get('/styles.css'){ scss :styles }
+get('/javascripts/application.js'){ coffee :application }
 
 
 get '/login' do 
@@ -31,8 +52,6 @@ get '/logout' do
 	redirect to('/login')
 end
 
-
-get('/styles.css'){ scss :styles }
 
 get '/' do
     slim :home
